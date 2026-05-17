@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kishore Alugolu — Java Full Stack Developer</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --teal:       #2dd4bf;
+      --teal-light: #5eead4;
+      --teal-dim:   rgba(45,212,191,0.12);
+      --blue:       #38bdf8;
+      --bg:         #050d12;
+      --bg2:        #080f16;
+      --bg3:        #0d1822;
+      --surface:    rgba(255,255,255,0.035);
+      --border:     rgba(45,212,191,0.18);
+      --text:       #d4e8ef;
+      --text-muted: #587080;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Noise overlay */
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:0; opacity:.5;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--teal); border-radius:2px; }
+
+    /* ── Navbar ── */
+    .navbar {
+      background:rgba(5,13,18,0.88);
+      backdrop-filter:blur(22px);
+      border-bottom:1px solid var(--border);
+      padding:1.1rem 0;
+      position:sticky; top:0; z-index:100;
+    }
+    .navbar-brand {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.5rem; font-weight:600;
+      color:var(--teal) !important; letter-spacing:.06em;
+    }
+    .nav-link {
+      color:var(--text-muted) !important;
+      font-size:.75rem; letter-spacing:.16em;
+      text-transform:uppercase; padding:.4rem 1rem !important;
+      transition:color .3s;
+    }
+    .nav-link:hover { color:var(--teal) !important; }
+    .navbar-toggler { border-color:var(--border); }
+    .navbar-toggler-icon {
+      background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%232dd4bf' stroke-linecap='round' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    .btn-hire {
+      border:1px solid var(--teal); color:var(--teal) !important;
+      padding:.4rem 1.2rem !important; font-size:.74rem;
+      letter-spacing:.14em; text-transform:uppercase;
+      transition:background .3s,color .3s;
+    }
+    .btn-hire:hover { background:var(--teal); color:#000 !important; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height:100vh; display:flex; align-items:center;
+      padding:6rem 0 4rem; position:relative; overflow:hidden;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 70% 60% at 75% 45%, rgba(45,212,191,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 45% at 15% 70%, rgba(56,189,248,.04) 0%, transparent 55%);
+      pointer-events:none;
+    }
+    /* vertical grid lines */
+    .hero-line { position:absolute; top:0; bottom:0; width:1px;
+      background:linear-gradient(to bottom,transparent,var(--border),transparent); }
+    .hero-line:nth-child(1){left:25%} .hero-line:nth-child(2){left:50%} .hero-line:nth-child(3){left:75%}
+
+    .hero-eyebrow {
+      font-size:.72rem; letter-spacing:.26em; text-transform:uppercase;
+      color:var(--teal); display:flex; align-items:center; gap:.8rem;
+      margin-bottom:1.6rem;
+      opacity:0; animation:fadeUp .8s .2s forwards;
+    }
+    .hero-eyebrow::before { content:''; width:38px; height:1px; background:var(--teal); }
+
+    .hero-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(3rem,8vw,6.5rem);
+      font-weight:300; line-height:1.06; letter-spacing:-.02em;
+      margin-bottom:.9rem;
+      opacity:0; animation:fadeUp .9s .4s forwards;
+    }
+    .hero-title em { font-style:italic; color:var(--teal); }
+
+    .hero-subtitle {
+      font-size:.88rem; color:var(--text-muted); line-height:1.85;
+      max-width:460px; margin-bottom:2.4rem;
+      opacity:0; animation:fadeUp .9s .6s forwards;
+    }
+    .hero-cta {
+      display:flex; gap:1rem; flex-wrap:wrap;
+      opacity:0; animation:fadeUp .9s .8s forwards;
+    }
+    .btn-primary-teal {
+      background:var(--teal); color:#000; border:none;
+      padding:.85rem 2.2rem; font-size:.78rem; font-weight:700;
+      letter-spacing:.15em; text-transform:uppercase;
+      text-decoration:none; transition:background .3s,transform .2s;
+      display:inline-block;
+    }
+    .btn-primary-teal:hover { background:var(--teal-light); transform:translateY(-2px); color:#000; }
+    .btn-outline-teal {
+      background:transparent; color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      padding:.85rem 2.2rem; font-size:.78rem;
+      letter-spacing:.15em; text-transform:uppercase;
+      text-decoration:none; transition:border-color .3s,color .3s;
+      display:inline-block;
+    }
+    .btn-outline-teal:hover { border-color:var(--teal); color:var(--teal); }
+
+    /* avatar / code window */
+    .hero-code-wrap {
+      opacity:0; animation:fadeIn 1.2s .5s forwards;
+    }
+    .code-window {
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:4px; overflow:hidden; position:relative;
+    }
+    .code-window::before {
+      content:''; position:absolute; inset:-1px;
+      border-radius:5px;
+      border:1px solid rgba(45,212,191,.25);
+    }
+    .code-topbar {
+      background:rgba(255,255,255,.04); padding:.7rem 1rem;
+      display:flex; align-items:center; gap:.5rem;
+      border-bottom:1px solid var(--border);
+    }
+    .dot { width:10px; height:10px; border-radius:50%; }
+    .dot-r { background:#ff5f57; } .dot-y { background:#ffbd2e; } .dot-g { background:#28c840; }
+    .code-filename { font-size:.7rem; color:var(--text-muted); margin-left:.5rem; letter-spacing:.08em; }
+    .code-body { padding:1.5rem; font-family:'Courier New',monospace; font-size:.82rem; line-height:1.75; }
+    .c-keyword { color:#c792ea; }
+    .c-class   { color:#82aaff; }
+    .c-string  { color:#c3e88d; }
+    .c-comment { color:#546e7a; font-style:italic; }
+    .c-anno    { color:var(--teal); }
+    .c-method  { color:#82aaff; }
+    .c-num     { color:#f78c6c; }
+    .cursor    { display:inline-block; width:2px; height:.9em; background:var(--teal); vertical-align:middle; animation:blink 1s infinite; }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .hero-stats {
+      display:flex; gap:2.5rem; margin-top:3rem;
+      padding-top:2rem; border-top:1px solid var(--border);
+      opacity:0; animation:fadeUp .9s 1s forwards;
+    }
+    .stat-num { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:600; color:var(--teal); line-height:1; }
+    .stat-label { font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); margin-top:.3rem; }
+
+    /* ── Sections ── */
+    section { position:relative; z-index:1; }
+    .section-pad { padding:6rem 0; }
+    .section-label {
+      font-size:.7rem; letter-spacing:.26em; text-transform:uppercase;
+      color:var(--teal); display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem;
+    }
+    .section-label::before { content:''; width:30px; height:1px; background:var(--teal); }
+    .section-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(2.2rem,5vw,3.8rem); font-weight:300;
+      line-height:1.1; letter-spacing:-.01em; margin-bottom:1.2rem;
+    }
+    .section-title em { font-style:italic; color:var(--teal); }
+    .teal-divider { width:55px; height:1px; background:linear-gradient(90deg,var(--teal),transparent); margin-bottom:2rem; }
+
+    /* ── About ── */
+    .about-section { background:var(--bg2); }
+    .avatar-card {
+      background:var(--bg3); border:1px solid var(--border);
+      padding:2.5rem; display:flex; flex-direction:column; align-items:center; text-align:center;
+      position:relative; overflow:hidden;
+    }
+    .avatar-card::before {
+      content:'';
+      position:absolute; top:-40px; right:-40px;
+      width:150px; height:150px; border-radius:50%;
+      background:radial-gradient(circle, rgba(45,212,191,.1) 0%, transparent 70%);
+    }
+    .avatar-icon {
+      width:110px; height:110px; border-radius:50%;
+      background:var(--teal-dim); border:2px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:3rem; color:var(--teal); margin-bottom:1.2rem;
+    }
+    .avatar-name { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; margin-bottom:.2rem; }
+    .avatar-role { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--teal); margin-bottom:1rem; }
+    .avatar-detail { font-size:.8rem; color:var(--text-muted); display:flex; align-items:center; gap:.5rem; margin:.25rem 0; }
+    .avatar-detail a { color:var(--teal); text-decoration:none; }
+    .avatar-detail a:hover { text-decoration:underline; }
+    .about-body { color:var(--text-muted); font-size:.9rem; line-height:1.9; }
+    .tech-tag {
+      display:inline-block; border:1px solid var(--border);
+      color:var(--text-muted); font-size:.7rem; letter-spacing:.08em;
+      text-transform:uppercase; padding:.3rem .8rem; margin:.25rem;
+      transition:border-color .3s, color .3s, background .3s;
+    }
+    .tech-tag:hover { border-color:var(--teal); color:var(--teal); background:var(--teal-dim); }
+
+    /* skill bars */
+    .skill-bar-wrap { margin-bottom:1.2rem; }
+    .skill-bar-label { display:flex; justify-content:space-between; font-size:.74rem; letter-spacing:.08em; margin-bottom:.5rem; }
+    .skill-bar-label span:last-child { color:var(--teal); }
+    .skill-bar-bg { height:2px; background:rgba(255,255,255,.07); position:relative; overflow:hidden; }
+    .skill-bar-fill { height:100%; background:linear-gradient(90deg,var(--teal),var(--teal-light)); width:0; transition:width 1.4s cubic-bezier(.25,.46,.45,.94); }
+
+    /* ── Services ── */
+    .services-section { background:var(--bg); }
+    .service-card {
+      background:var(--surface); border:1px solid var(--border);
+      padding:2.2rem; height:100%; position:relative; overflow:hidden;
+      transition:border-color .4s, transform .3s;
+    }
+    .service-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,var(--teal),transparent);
+      transform:scaleX(0); transition:transform .4s;
+    }
+    .service-card:hover { border-color:rgba(45,212,191,.5); transform:translateY(-5px); }
+    .service-card:hover::before { transform:scaleX(1); }
+    .service-num { font-family:'Cormorant Garamond',serif; font-size:3.5rem; font-weight:300; color:var(--teal-dim); line-height:1; margin-bottom:.8rem; }
+    .service-icon { font-size:1.8rem; color:var(--teal); margin-bottom:.9rem; }
+    .service-title { font-size:.95rem; font-weight:700; letter-spacing:.06em; margin-bottom:.7rem; }
+    .service-desc { font-size:.82rem; color:var(--text-muted); line-height:1.8; }
+
+    /* ── Experience ── */
+    .experience-section { background:var(--bg2); }
+    .timeline { position:relative; padding-left:2rem; }
+    .timeline::before {
+      content:''; position:absolute; left:0; top:8px; bottom:0;
+      width:1px; background:linear-gradient(to bottom,var(--teal),transparent);
+    }
+    .timeline-item { position:relative; padding-bottom:3rem; }
+    .timeline-item:last-child { padding-bottom:0; }
+    .timeline-dot {
+      position:absolute; left:-2.45rem; top:4px;
+      width:10px; height:10px; border-radius:50%;
+      background:var(--teal); box-shadow:0 0 0 4px rgba(45,212,191,.15);
+    }
+    .timeline-company { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--teal); margin-bottom:.3rem; }
+    .timeline-role { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:400; margin-bottom:.3rem; }
+    .timeline-meta { font-size:.75rem; color:var(--text-muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; }
+    .timeline-meta span { display:flex; align-items:center; gap:.3rem; }
+    .timeline-bullet {
+      list-style:none; padding:0;
+    }
+    .timeline-bullet li {
+      font-size:.85rem; color:var(--text-muted); line-height:1.8;
+      padding:.3rem 0; padding-left:1.2rem; position:relative;
+    }
+    .timeline-bullet li::before {
+      content:'▹'; position:absolute; left:0; color:var(--teal); font-size:.8rem;
+    }
+
+    /* ── Projects ── */
+    .projects-section { background:var(--bg); }
+    .project-card {
+      background:var(--surface); border:1px solid var(--border);
+      padding:2rem; height:100%; position:relative; overflow:hidden;
+      transition:border-color .4s, transform .3s;
+    }
+    .project-card:hover { border-color:rgba(45,212,191,.45); transform:translateY(-4px); }
+    .project-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.2rem; }
+    .project-folder { font-size:2rem; color:var(--teal); }
+    .project-links a { color:var(--text-muted); font-size:1rem; margin-left:.7rem; text-decoration:none; transition:color .3s; }
+    .project-links a:hover { color:var(--teal); }
+    .project-name { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; margin-bottom:.6rem; }
+    .project-desc { font-size:.82rem; color:var(--text-muted); line-height:1.8; margin-bottom:1.2rem; }
+    .project-stack { display:flex; flex-wrap:wrap; gap:.5rem; }
+    .stack-tag { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); padding:.2rem .6rem; border:1px solid rgba(45,212,191,.25); }
+
+    /* ── Education & Certs ── */
+    .edu-section { background:var(--bg2); }
+    .edu-card {
+      background:var(--surface); border:1px solid var(--border);
+      padding:1.8rem; margin-bottom:1rem; position:relative; overflow:hidden;
+      transition:border-color .3s;
+    }
+    .edu-card:hover { border-color:rgba(45,212,191,.4); }
+    .edu-degree { font-size:.95rem; font-weight:700; letter-spacing:.04em; margin-bottom:.3rem; }
+    .edu-school { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--teal); margin-bottom:.3rem; }
+    .edu-meta { font-size:.75rem; color:var(--text-muted); display:flex; gap:1.2rem; flex-wrap:wrap; }
+    .cert-card {
+      background:var(--surface); border:1px solid var(--border);
+      padding:1.4rem 1.8rem; display:flex; align-items:center; gap:1rem;
+      margin-bottom:.8rem; transition:border-color .3s;
+    }
+    .cert-card:hover { border-color:rgba(45,212,191,.4); }
+    .cert-icon { font-size:1.5rem; color:var(--teal); flex-shrink:0; }
+    .cert-name { font-size:.88rem; font-weight:600; }
+    .cert-issuer { font-size:.74rem; color:var(--text-muted); margin-top:.15rem; }
+
+    /* ── Contact ── */
+    .contact-section { background:var(--bg); }
+    .contact-form-wrap { background:var(--surface); border:1px solid var(--border); padding:3rem; }
+    .form-label { font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.5rem; }
+    .form-control, .form-select {
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.1);
+      border-radius:0; color:var(--text); padding:.82rem 1rem;
+      font-family:'Syne',sans-serif; font-size:.87rem; transition:border-color .3s;
+    }
+    .form-control:focus, .form-select:focus { background:rgba(255,255,255,.05); border-color:var(--teal); box-shadow:none; color:var(--text); }
+    .form-control::placeholder { color:var(--text-muted); }
+    textarea.form-control { resize:none; min-height:130px; }
+    .contact-info-item { display:flex; align-items:flex-start; gap:1rem; padding:1.4rem 0; border-bottom:1px solid var(--border); }
+    .contact-info-item:first-child { border-top:1px solid var(--border); }
+    .contact-info-icon { width:38px; height:38px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--teal); flex-shrink:0; }
+    .contact-info-label { font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--text-muted); }
+    .contact-info-val { font-size:.88rem; margin-top:.15rem; }
+    .contact-info-val a { color:var(--teal); text-decoration:none; }
+    .social-links { display:flex; gap:.8rem; margin-top:2rem; }
+    .social-link { width:40px; height:40px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); text-decoration:none; font-size:.95rem; transition:border-color .3s,color .3s,background .3s; }
+    .social-link:hover { border-color:var(--teal); color:#000; background:var(--teal); }
+
+    /* ── Footer ── */
+    footer { background:var(--bg); border-top:1px solid var(--border); padding:2.5rem 0; }
+    .footer-brand { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:var(--teal); }
+    .footer-copy { font-size:.74rem; color:var(--text-muted); }
+    .footer-links a { font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; margin-left:1.5rem; transition:color .3s; }
+    .footer-links a:hover { color:var(--teal); }
+
+    /* ── Scroll reveal ── */
+    .reveal { opacity:0; transform:translateY(30px); transition:opacity .8s ease,transform .8s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-delay-1 { transition-delay:.15s; }
+    .reveal-delay-2 { transition-delay:.3s; }
+    .reveal-delay-3 { transition-delay:.45s; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    /* ── Open-to-work badge ── */
+    .open-badge {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:rgba(45,212,191,.1); border:1px solid rgba(45,212,191,.3);
+      padding:.35rem .9rem; font-size:.7rem; letter-spacing:.1em;
+      text-transform:uppercase; color:var(--teal); margin-bottom:1.5rem;
+      opacity:0; animation:fadeUp .8s .1s forwards;
+    }
+    .open-badge::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--teal); animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+    @media (max-width:768px) {
+      .hero-code-wrap { margin-top:3rem; }
+      .contact-form-wrap { padding:2rem 1.5rem; }
+      .hero-stats { gap:1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="#">KA.</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav mx-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">Skills</a></li>
+        <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+        <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+        <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+      <a class="nav-link btn-hire" href="#contact">Hire Me</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div><div class="hero-line"></div><div class="hero-line"></div>
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <div class="open-badge">Open to Opportunities</div>
+        <div class="hero-eyebrow">Full Stack Java Developer</div>
+        <h1 class="hero-title">
+          Building<br><em>Scalable</em><br>Java Systems
+        </h1>
+        <p class="hero-subtitle">
+          2+ years crafting high-performance, enterprise-grade web applications using
+          Java, Spring Boot, Microservices, and React. Based in Visakhapatnam, India.
+          Currently at HCLTech, Bengaluru.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn-primary-teal">View Projects</a>
+          <a href="#contact" class="btn-outline-teal">Get In Touch</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="stat-num">2+</div><div class="stat-label">Years Exp.</div></div>
+          <div><div class="stat-num">10+</div><div class="stat-label">Tech Stack</div></div>
+          <div><div class="stat-num">3</div><div class="stat-label">Certifications</div></div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 hero-code-wrap">
+        <div class="code-window">
+          <div class="code-topbar">
+            <span class="dot dot-r"></span>
+            <span class="dot dot-y"></span>
+            <span class="dot dot-g"></span>
+            <span class="code-filename">KishoreAlugolu.java</span>
+          </div>
+          <div class="code-body">
+<span class="c-anno">@SpringBootApplication</span><br>
+<span class="c-keyword">public class</span> <span class="c-class">KishoreAlugolu</span> {<br>
+<br>
+&nbsp;&nbsp;<span class="c-comment">// Full Stack Java Developer</span><br>
+&nbsp;&nbsp;<span class="c-keyword">private final</span> String role =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Java Developer @ HCLTech"</span>;<br>
+<br>
+&nbsp;&nbsp;<span class="c-anno">@Autowired</span><br>
+&nbsp;&nbsp;<span class="c-keyword">private</span> List&lt;String&gt; skills = Arrays.asList(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Spring Boot"</span>, <span class="c-string">"Microservices"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"React.js"</span>, <span class="c-string">"MySQL"</span>, <span class="c-string">"AWS"</span><br>
+&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;<span class="c-anno">@GetMapping</span>(<span class="c-string">"/contact"</span>)<br>
+&nbsp;&nbsp;<span class="c-keyword">public</span> String <span class="c-method">hire</span>() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-keyword">return</span> <span class="c-string">"Let's build something!"</span>;<br>
+&nbsp;&nbsp;}<br>
+}<span class="cursor"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section class="section-pad about-section" id="about">
+  <div class="container">
+    <div class="row gy-5 align-items-start">
+      <div class="col-lg-4 reveal">
+        <div class="avatar-card">
+          <div class="avatar-icon"><i class="bi bi-person-badge"></i></div>
+          <div class="avatar-name">Kishore Alugolu</div>
+          <div class="avatar-role">Full Stack Java Developer</div>
+          <div class="avatar-detail"><i class="bi bi-geo-alt" style="color:var(--teal)"></i> Visakhapatnam, Andhra Pradesh, India</div>
+          <div class="avatar-detail"><i class="bi bi-envelope" style="color:var(--teal)"></i> <a href="mailto:alugolukishore1109@gmail.com">alugolukishore1109@gmail.com</a></div>
+          <div class="avatar-detail"><i class="bi bi-telephone" style="color:var(--teal)"></i> +91-9059333509</div>
+          <div class="avatar-detail"><i class="bi bi-linkedin" style="color:var(--teal)"></i> <a href="https://www.linkedin.com/in/kishore-alugolu/" target="_blank">linkedin.com/in/kishore-alugolu</a></div>
+          <div class="avatar-detail"><i class="bi bi-briefcase" style="color:var(--teal)"></i> Currently at HCLTech, Bengaluru</div>
+          <div class="avatar-detail" style="margin-top:.8rem;">
+            <span style="font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">Languages:</span>&nbsp;English · Hindi · Telugu
+          </div>
+          <div class="avatar-detail">
+            <span style="font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">Interests:</span>&nbsp;Chess ♟ · Cricket 🏏
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8 ps-lg-5 reveal reveal-delay-1">
+        <div class="section-label">About Me</div>
+        <h2 class="section-title">Engineer. Problem-Solver.<br><em>Lifelong Learner.</em></h2>
+        <div class="teal-divider"></div>
+        <p class="about-body mb-4">
+          Full Stack Java Developer with 2+ years of experience delivering high-performance, enterprise-grade web applications.
+          Skilled in architecting robust backend services using Java and Spring Boot alongside responsive frontends in React.
+          Proven expertise in RESTful API design, database optimization, and implementing scalable microservices.
+        </p>
+        <p class="about-body mb-4">
+          A collaborative engineer focused on CI/CD automation, clean code principles, and delivering seamless end-to-end user
+          experiences. Passionate about driving technical excellence and solving complex business challenges within Agile environments.
+        </p>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Java / Spring Boot</span><span>90%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="90"></div></div></div>
+            <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Microservices</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="85"></div></div></div>
+            <div class="skill-bar-wrap"><div class="skill-bar-label"><span>React.js</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="80"></div></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="skill-bar-wrap"><div class="skill-bar-label"><span>MySQL / PostgreSQL</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="85"></div></div></div>
+            <div class="skill-bar-wrap"><div class="skill-bar-label"><span>AWS / Docker</span><span>75%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="75"></div></div></div>
+            <div class="skill-bar-wrap"><div class="skill-bar-label"><span>CI/CD / DevOps</span><span>78%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" data-width="78"></div></div></div>
+          </div>
+        </div>
+
+        <div>
+          <span class="tech-tag">Java 17/21</span>
+          <span class="tech-tag">Spring Boot</span>
+          <span class="tech-tag">Microservices</span>
+          <span class="tech-tag">REST APIs</span>
+          <span class="tech-tag">React.js</span>
+          <span class="tech-tag">MySQL</span>
+          <span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">Docker</span>
+          <span class="tech-tag">AWS</span>
+          <span class="tech-tag">Git</span>
+          <span class="tech-tag">Agile / Scrum</span>
+          <span class="tech-tag">JUnit 5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SKILLS / SERVICES ══════════ -->
+<section class="section-pad services-section" id="services">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col-lg-6 reveal">
+        <div class="section-label">Technical Expertise</div>
+        <h2 class="section-title">What I <em>Specialise</em> In</h2>
+      </div>
+      <div class="col-lg-6 d-flex align-items-end reveal reveal-delay-1">
+        <p style="color:var(--text-muted);font-size:.88rem;line-height:1.8;">
+          End-to-end development across the full stack — from microservices to
+          pixel-perfect UIs, from cloud deployment to secure APIs.
+        </p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3 reveal">
+        <div class="service-card">
+          <div class="service-num">01</div>
+          <div class="service-icon"><i class="bi bi-server"></i></div>
+          <div class="service-title">Backend Development</div>
+          <p class="service-desc">Core Java (17/21), Spring Boot, Spring MVC, Microservices Architecture, RESTful APIs, Spring Data JPA, Hibernate.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal reveal-delay-1">
+        <div class="service-card">
+          <div class="service-num">02</div>
+          <div class="service-icon"><i class="bi bi-layout-text-window-reverse"></i></div>
+          <div class="service-title">Frontend Development</div>
+          <p class="service-desc">React.js, JavaScript ES6+, TypeScript, HTML5, CSS3, Redux Toolkit, Context API, Axios, responsive design.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal reveal-delay-2">
+        <div class="service-card">
+          <div class="service-num">03</div>
+          <div class="service-icon"><i class="bi bi-database"></i></div>
+          <div class="service-title">Database & Security</div>
+          <p class="service-desc">MySQL, PostgreSQL, Redis caching, Spring Security, OAuth 2.0, JWT, Role-Based Access Control (RBAC).</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 reveal reveal-delay-3">
+        <div class="service-card">
+          <div class="service-num">04</div>
+          <div class="service-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+          <div class="service-title">DevOps & Cloud</div>
+          <p class="service-desc">AWS (EC2, S3), Docker, CI/CD via GitHub Actions & Jenkins, Maven, SonarQube, Postman, Swagger/OpenAPI.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ EXPERIENCE ══════════ -->
+<section class="section-pad experience-section" id="experience">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col reveal">
+        <div class="section-label">Work History</div>
+        <h2 class="section-title">Professional <em>Experience</em></h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-9 reveal reveal-delay-1">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-company">HCLTech</div>
+            <div class="timeline-role">Java Developer</div>
+            <div class="timeline-meta">
+              <span><i class="bi bi-calendar3"></i> January 2024 – Present</span>
+              <span><i class="bi bi-geo-alt"></i> Bengaluru, India</span>
+            </div>
+            <ul class="timeline-bullet">
+              <li>Developed and maintained a real-time trading application using Core Java, MySQL, and Java-based UI frameworks, ensuring high-performance transactions and seamless data flow across the platform.</li>
+              <li>Collaborated with cross-functional teams to implement client-driven features via JIRA, contributing to both backend API development and UI design for specific trading application requirements.</li>
+              <li>Designed and optimized MySQL databases — enhancing query performance, enforcing data integrity, and supporting large-scale transactional systems for live trading environments.</li>
+              <li>Led full-cycle development from requirement analysis through implementation, testing, and production deployment, both independently and as part of a team.</li>
+              <li>Implemented Git-based version control best practices and CI/CD pipelines, promoting continuous delivery and ensuring stability across all application updates.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side panel -->
+      <div class="col-lg-3 reveal reveal-delay-2">
+        <div style="background:var(--surface);border:1px solid var(--border);padding:1.8rem;margin-top:2rem;">
+          <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;">Quick Facts</div>
+          <div style="margin-bottom:1rem;">
+            <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:.3rem;">Current Role</div>
+            <div style="font-size:.85rem;font-weight:600;">Java Developer</div>
+          </div>
+          <div style="margin-bottom:1rem;border-top:1px solid var(--border);padding-top:1rem;">
+            <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:.3rem;">Company</div>
+            <div style="font-size:.85rem;font-weight:600;">HCLTech</div>
+          </div>
+          <div style="margin-bottom:1rem;border-top:1px solid var(--border);padding-top:1rem;">
+            <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:.3rem;">Domain</div>
+            <div style="font-size:.85rem;font-weight:600;">Real-Time Trading</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:1rem;">
+            <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:.3rem;">Methodology</div>
+            <div style="font-size:.85rem;font-weight:600;">Agile / Scrum</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<section class="section-pad projects-section" id="projects">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col-lg-7 reveal">
+        <div class="section-label">Work Showcase</div>
+        <h2 class="section-title">Featured <em>Projects</em></h2>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 reveal">
+        <div class="project-card">
+          <div class="project-top">
+            <div class="project-folder"><i class="bi bi-folder2-open"></i></div>
+            <div class="project-links">
+              <a href="#" title="GitHub"><i class="bi bi-github"></i></a>
+              <a href="#" title="External Link"><i class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+          </div>
+          <div class="project-name">Blood Bank Management System</div>
+          <p class="project-desc">
+            A comprehensive system to streamline blood donation management, inventory tracking, and distribution. 
+            Built on Oracle PL/SQL with robust stored procedures, triggers, and views for data integrity and 
+            real-time inventory management across multiple blood types and donor records.
+          </p>
+          <div class="project-stack">
+            <span class="stack-tag">Oracle PL/SQL</span>
+            <span class="stack-tag">Database Design</span>
+            <span class="stack-tag">Stored Procedures</span>
+            <span class="stack-tag">Triggers</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 reveal reveal-delay-1">
+        <div class="project-card">
+          <div class="project-top">
+            <div class="project-folder"><i class="bi bi-folder2-open"></i></div>
+            <div class="project-links">
+              <a href="#" title="GitHub"><i class="bi bi-github"></i></a>
+              <a href="#" title="External Link"><i class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+          </div>
+          <div class="project-name">Litter Detection & Segregation</div>
+          <p class="project-desc">
+            An AI-powered waste detection application that identifies and classifies litter through images,
+            video feeds, and live camera input. Features a Python Flask backend serving a computer vision
+            model with an HTML/CSS/JavaScript frontend for real-time display.
+          </p>
+          <div class="project-stack">
+            <span class="stack-tag">Python</span>
+            <span class="stack-tag">Flask</span>
+            <span class="stack-tag">Computer Vision</span>
+            <span class="stack-tag">HTML/CSS/JS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder card for trading app -->
+      <div class="col-md-6 reveal reveal-delay-2">
+        <div class="project-card" style="border-style:dashed;opacity:.7;">
+          <div class="project-top">
+            <div class="project-folder"><i class="bi bi-lock"></i></div>
+          </div>
+          <div class="project-name">Real-Time Trading Platform</div>
+          <p class="project-desc">
+            Enterprise trading application developed at HCLTech featuring real-time transaction processing,
+            optimized MySQL data pipelines, and a Java-based UI. Confidential — details available on request.
+          </p>
+          <div class="project-stack">
+            <span class="stack-tag">Core Java</span>
+            <span class="stack-tag">MySQL</span>
+            <span class="stack-tag">REST APIs</span>
+            <span class="stack-tag">CI/CD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ EDUCATION & CERTS ══════════ -->
+<section class="section-pad edu-section" id="education">
+  <div class="container">
+    <div class="row gy-5">
+      <!-- Education -->
+      <div class="col-lg-6 reveal">
+        <div class="section-label">Academic Background</div>
+        <h2 class="section-title" style="font-size:2.5rem;">Education</h2>
+        <div class="teal-divider"></div>
+
+        <div class="edu-card">
+          <div class="edu-degree">Bachelor of Technology — Computer Science &amp; Engineering</div>
+          <div class="edu-school">Vignan's Institute of Information Technology</div>
+          <div class="edu-meta">
+            <span><i class="bi bi-calendar3"></i> 2019 – 2023</span>
+            <span><i class="bi bi-geo-alt"></i> Visakhapatnam</span>
+            <span><i class="bi bi-award"></i> CGPA: 7.86</span>
+          </div>
+        </div>
+
+        <div class="edu-card">
+          <div class="edu-degree">Higher Secondary Education (MPC)</div>
+          <div class="edu-school">Narayana Junior College</div>
+          <div class="edu-meta">
+            <span><i class="bi bi-calendar3"></i> 2017 – 2019</span>
+            <span><i class="bi bi-geo-alt"></i> Visakhapatnam</span>
+            <span><i class="bi bi-award"></i> CGPA: 9.46</span>
+          </div>
+        </div>
+
+        <div class="edu-card">
+          <div class="edu-degree">Secondary School Certificate (SSC)</div>
+          <div class="edu-school">Sri Chaitanya EM School</div>
+          <div class="edu-meta">
+            <span><i class="bi bi-calendar3"></i> 2016 – 2017</span>
+            <span><i class="bi bi-geo-alt"></i> Visakhapatnam</span>
+            <span><i class="bi bi-award"></i> CGPA: 9.7</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certifications -->
+      <div class="col-lg-6 reveal reveal-delay-1">
+        <div class="section-label">Credentials</div>
+        <h2 class="section-title" style="font-size:2.5rem;">Certifications</h2>
+        <div class="teal-divider"></div>
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="bi bi-cloud-fill"></i></div>
+          <div>
+            <div class="cert-name">AWS Certified Cloud Practitioner</div>
+            <div class="cert-issuer">Amazon Web Services (AWS)</div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="bi bi-microsoft"></i></div>
+          <div>
+            <div class="cert-name">Microsoft Azure Fundamentals (AZ-900)</div>
+            <div class="cert-issuer">Microsoft</div>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-icon"><i class="bi bi-code-square"></i></div>
+          <div>
+            <div class="cert-name">Python (Basic) Certification</div>
+            <div class="cert-issuer">HackerRank</div>
+          </div>
+        </div>
+
+        <!-- Extra info card -->
+        <div style="background:var(--teal-dim);border:1px solid var(--border);padding:1.5rem;margin-top:1.2rem;">
+          <div style="font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem;">Currently Exploring</div>
+          <p style="font-size:.83rem;color:var(--text-muted);line-height:1.8;margin:0;">
+            Advanced Spring Boot patterns, Kubernetes orchestration, System Design principles, and Java performance tuning.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CONTACT ══════════ -->
+<section class="section-pad contact-section" id="contact">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col-lg-7 reveal">
+        <div class="section-label">Get In Touch</div>
+        <h2 class="section-title">Let's Build Something<br><em>Together</em></h2>
+      </div>
+    </div>
+    <div class="row g-5">
+      <div class="col-lg-5 reveal">
+        <p style="color:var(--text-muted);font-size:.9rem;line-height:1.9;margin-bottom:2rem;">
+          I'm open to new job opportunities, freelance projects, and collaborations.
+          If you have an exciting role or project in mind, feel free to reach out!
+        </p>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-envelope"></i></div>
+          <div>
+            <div class="contact-info-label">Email</div>
+            <div class="contact-info-val"><a href="mailto:alugolukishore1109@gmail.com">alugolukishore1109@gmail.com</a></div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-telephone"></i></div>
+          <div>
+            <div class="contact-info-label">Phone</div>
+            <div class="contact-info-val"><a href="tel:+919059333509">+91-9059333509</a></div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="bi bi-geo-alt"></i></div>
+          <div>
+            <div class="contact-info-label">Location</div>
+            <div class="contact-info-val">Visakhapatnam, Andhra Pradesh, India</div>
+          </div>
+        </div>
+
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/kishore-alugolu/" target="_blank" class="social-link"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-github"></i></a>
+          <a href="mailto:alugolukishore1109@gmail.com" class="social-link"><i class="bi bi-envelope"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-7 reveal reveal-delay-1">
+        <div class="contact-form-wrap">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Your Name</label>
+              <input type="text" class="form-control" placeholder="Name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Subject</label>
+              <input type="text" class="form-control" placeholder="Subject">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Message</label>
+              <textarea class="form-control" placeholder="Tell me about your project or opportunity…"></textarea>
+            </div>
+            <div class="col-12">
+              <button class="btn-primary-teal w-100 text-center" style="cursor:pointer;border:none;padding:.9rem;">
+                Send Message &nbsp;<i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <div class="footer-brand">Kishore Alugolu</div>
+        <div class="footer-copy mt-1">© 2026 Kishore Alugolu · Full Stack Java Developer</div>
+      </div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* Scroll reveal */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        e.target.querySelectorAll('.skill-bar-fill').forEach(b => { b.style.width = b.dataset.width + '%'; });
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  /* Active nav */
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+    document.querySelectorAll('.nav-link').forEach(l => {
+      l.style.color = '';
+      if (l.getAttribute('href') === '#' + current) l.style.color = 'var(--teal)';
+    });
+  });
+</script>
+</body>
+</html>
